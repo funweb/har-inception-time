@@ -20,7 +20,7 @@ def prepare_data():
 
     nb_classes = len(np.unique(np.concatenate((y_train, y_test), axis=0)))
 
-    # make the min to zero of labels
+    # make the min to zero of labels  将标签的最小值设为零
     y_train, y_test = transform_labels(y_train, y_test)
 
     # save orignal y because later we will use binary
@@ -32,8 +32,8 @@ def prepare_data():
     y_train = enc.transform(y_train.reshape(-1, 1)).toarray()
     y_test = enc.transform(y_test.reshape(-1, 1)).toarray()
 
-    if len(x_train.shape) == 2:  # if univariate
-        # add a dimension to make it multivariate with one dimension
+    if len(x_train.shape) == 2:  # if univariate, 如果是单变量
+        # add a dimension to make it multivariate with one dimension  添加一个维度，使其具有一个维度的多变量
         x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], 1))
         x_test = x_test.reshape((x_test.shape[0], x_test.shape[1], 1))
 
@@ -44,9 +44,9 @@ def fit_classifier():
     input_shape = x_train.shape[1:]
 
     classifier = create_classifier(classifier_name, input_shape, nb_classes,
-                                   output_directory)
+                                   output_directory, verbose=True)
 
-    classifier.fit(x_train, y_train, x_test, y_test, y_true)
+    classifier.fit(x_train, y_train, x_test, y_test, y_true)  # plot_test_acc 决定了是否在训练的时候查看验证效果
 
 
 def create_classifier(classifier_name, input_shape, nb_classes, output_directory,
@@ -80,26 +80,56 @@ def get_xp_val(xp):
 
 
 ############################################### main
-root_dir = '/b/home/uha/hfawaz-datas/temp-dl-tsc/'
-xps = ['use_bottleneck', 'use_residual', 'nb_filters', 'depth',
-       'kernel_size', 'batch_size']
 
-if sys.argv[1] == 'InceptionTime':
-    # run nb_iter_ iterations of Inception on the whole TSC archive
-    classifier_name = 'inception'
-    archive_name = ARCHIVE_NAMES[0]
-    nb_iter_ = 5
+if __name__ == '__main__':
+    # root_dir = '/b/home/uha/hfawaz-datas/temp-dl-tsc/'
+    root_dir = '../datasets'
+    xps = ['use_bottleneck', 'use_residual', 'nb_filters', 'depth',
+           'kernel_size', 'batch_size']
 
-    datasets_dict = read_all_datasets(root_dir, archive_name)
+    if sys.argv[1] == 'InceptionTime':
+        # run nb_iter_ iterations of Inception on the whole TSC archive
+        classifier_name = 'inception'
+        archive_name = ARCHIVE_NAMES[0]
+        nb_iter_ = 5
 
-    for iter in range(nb_iter_):
-        print('\t\titer', iter)
+        datasets_dict = read_all_datasets(root_dir, archive_name)
 
-        trr = ''
-        if iter != 0:
-            trr = '_itr_' + str(iter)
+        for iter in range(nb_iter_):
+            print('\t\titer', iter)
 
-        tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + trr + '/'
+            trr = ''
+            if iter != 0:
+                trr = '_itr_' + str(iter)
+
+            tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + trr + '/'
+
+            for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
+                print('\t\t\tdataset_name: ', dataset_name)
+
+                x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
+
+                output_directory = tmp_output_directory + dataset_name + '/'
+
+                temp_output_directory = create_directory(output_directory)
+
+                if temp_output_directory is None:
+                    print('Already_done', tmp_output_directory, dataset_name)
+                    continue
+
+                fit_classifier()
+
+                print('\t\t\t\tDONE')
+
+                # the creation of this directory means
+                create_directory(output_directory + '/DONE')
+
+        # run the ensembling of these iterations of Inception
+        classifier_name = 'nne'
+
+        datasets_dict = read_all_datasets(root_dir, archive_name)
+
+        tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
 
         for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
             print('\t\t\tdataset_name: ', dataset_name)
@@ -108,135 +138,109 @@ if sys.argv[1] == 'InceptionTime':
 
             output_directory = tmp_output_directory + dataset_name + '/'
 
-            temp_output_directory = create_directory(output_directory)
-
-            if temp_output_directory is None:
-                print('Already_done', tmp_output_directory, dataset_name)
-                continue
-
             fit_classifier()
 
             print('\t\t\t\tDONE')
 
-            # the creation of this directory means
-            create_directory(output_directory + '/DONE')
+    elif sys.argv[1] == 'InceptionTime_xp':
+        # this part is for running inception with the different hyperparameters
+        # listed in the paper, on the whole TSC archive
+        archive_name = 'TSC'
+        classifier_name = 'inception'
+        max_iterations = 5
 
-    # run the ensembling of these iterations of Inception
-    classifier_name = 'nne'
+        datasets_dict = read_all_datasets(root_dir, archive_name)
 
-    datasets_dict = read_all_datasets(root_dir, archive_name)
+        for xp in xps:
 
-    tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
+            xp_arr = get_xp_val(xp)
 
-    for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
-        print('\t\t\tdataset_name: ', dataset_name)
+            print('xp', xp)
 
-        x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
+            for xp_val in xp_arr:
+                print('\txp_val', xp_val)
 
-        output_directory = tmp_output_directory + dataset_name + '/'
+                kwargs = {xp: xp_val}
 
-        fit_classifier()
+                for iter in range(max_iterations):
 
-        print('\t\t\t\tDONE')
+                    trr = ''
+                    if iter != 0:
+                        trr = '_itr_' + str(iter)
+                    print('\t\titer', iter)
 
-elif sys.argv[1] == 'InceptionTime_xp':
-    # this part is for running inception with the different hyperparameters
-    # listed in the paper, on the whole TSC archive
-    archive_name = 'TSC'
-    classifier_name = 'inception'
-    max_iterations = 5
+                    for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
 
-    datasets_dict = read_all_datasets(root_dir, archive_name)
+                        output_directory = root_dir + '/results/' + classifier_name + '/' + '/' + xp + '/' + '/' + str(
+                            xp_val) + '/' + archive_name + trr + '/' + dataset_name + '/'
 
-    for xp in xps:
+                        print('\t\t\tdataset_name', dataset_name)
+                        x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
 
-        xp_arr = get_xp_val(xp)
+                        # check if data is too big for this gpu
+                        size_data = x_train.shape[0] * x_train.shape[1]
 
-        print('xp', xp)
+                        temp_output_directory = create_directory(output_directory)
 
-        for xp_val in xp_arr:
-            print('\txp_val', xp_val)
+                        if temp_output_directory is None:
+                            print('\t\t\t\t', 'Already_done')
+                            continue
 
-            kwargs = {xp: xp_val}
+                        input_shape = x_train.shape[1:]
 
-            for iter in range(max_iterations):
+                        from classifiers import inception
 
-                trr = ''
-                if iter != 0:
-                    trr = '_itr_' + str(iter)
-                print('\t\titer', iter)
+                        classifier = inception.Classifier_INCEPTION(output_directory, input_shape, nb_classes,
+                                                                    verbose=False, build=True, **kwargs)
+
+                        classifier.fit(x_train, y_train, x_test, y_test, y_true)
+
+                        # the creation of this directory means
+                        create_directory(output_directory + '/DONE')
+
+                        print('\t\t\t\t', 'DONE')
+
+        # we now need to ensemble each iteration of inception (aka InceptionTime)
+        # 我们现在需要集成每个inception的迭代（又名InceptionTime）
+        archive_name = ARCHIVE_NAMES[0]
+        classifier_name = 'nne'
+
+        datasets_dict = read_all_datasets(root_dir, archive_name)
+
+        tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
+
+        for xp in xps:
+            xp_arr = get_xp_val(xp)
+            for xp_val in xp_arr:
+
+                clf_name = 'inception/' + xp + '/' + str(xp_val)
 
                 for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
-
-                    output_directory = root_dir + '/results/' + classifier_name + '/' + '/' + xp + '/' + '/' + str(
-                        xp_val) + '/' + archive_name + trr + '/' + dataset_name + '/'
-
-                    print('\t\t\tdataset_name', dataset_name)
                     x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
 
-                    # check if data is too big for this gpu
-                    size_data = x_train.shape[0] * x_train.shape[1]
+                    output_directory = tmp_output_directory + dataset_name + '/'
 
-                    temp_output_directory = create_directory(output_directory)
+                    from classifiers import nne
 
-                    if temp_output_directory is None:
-                        print('\t\t\t\t', 'Already_done')
-                        continue
-
-                    input_shape = x_train.shape[1:]
-
-                    from classifiers import inception
-
-                    classifier = inception.Classifier_INCEPTION(output_directory, input_shape, nb_classes,
-                                                                verbose=False, build=True, **kwargs)
+                    classifier = nne.Classifier_NNE(output_directory, x_train.shape[1:],
+                                                    nb_classes, clf_name=clf_name)
 
                     classifier.fit(x_train, y_train, x_test, y_test, y_true)
 
-                    # the creation of this directory means
-                    create_directory(output_directory + '/DONE')
+    elif sys.argv[1] == 'run_length_xps':
+        # this is to generate the archive for the length experiments
+        run_length_xps(root_dir)
 
-                    print('\t\t\t\t', 'DONE')
-
-    # we now need to ensemble each iteration of inception (aka InceptionTime)
-    archive_name = ARCHIVE_NAMES[0]
-    classifier_name = 'nne'
-
-    datasets_dict = read_all_datasets(root_dir, archive_name)
-
-    tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
-
-    for xp in xps:
-        xp_arr = get_xp_val(xp)
-        for xp_val in xp_arr:
-
-            clf_name = 'inception/' + xp + '/' + str(xp_val)
-
-            for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
-                x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
-
-                output_directory = tmp_output_directory + dataset_name + '/'
-
-                from classifiers import nne
-
-                classifier = nne.Classifier_NNE(output_directory, x_train.shape[1:],
-                                                nb_classes, clf_name=clf_name)
-
-                classifier.fit(x_train, y_train, x_test, y_test, y_true)
-
-elif sys.argv[1] == 'run_length_xps':
-    # this is to generate the archive for the length experiments
-    run_length_xps(root_dir)
-
-elif sys.argv[1] == 'generate_results_csv':
-    clfs = []
-    itr = '-0-1-2-3-4-'
-    inceptionTime = 'nne/inception'
-    # add InceptionTime: an ensemble of 5 Inception networks
-    clfs.append(inceptionTime + itr)
-    # add InceptionTime for each hyperparameter study
-    for xp in xps:
-        xp_arr = get_xp_val(xp)
-        for xp_val in xp_arr:
-            clfs.append(inceptionTime + '/' + xp + '/' + str(xp_val) + itr)
-    df = generate_results_csv('results.csv', root_dir, clfs)
-    print(df)
+    elif sys.argv[1] == 'generate_results_csv':
+        clfs = []
+        itr = '-0-1-2-3-4-'
+        inceptionTime = 'nne/inception'
+        # add InceptionTime: an ensemble of 5 Inception networks
+        clfs.append(inceptionTime + itr)
+        # add InceptionTime for each hyperparameter study
+        for xp in xps:
+            xp_arr = get_xp_val(xp)
+            for xp_val in xp_arr:
+                clfs.append(inceptionTime + '/' + xp + '/' + str(xp_val) + itr)
+        df = generate_results_csv('results.csv', root_dir, clfs)
+        print(df)

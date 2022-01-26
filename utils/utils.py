@@ -71,16 +71,16 @@ def read_all_datasets(root_dir, archive_name):
     dataset_names_to_sort = []
 
     if archive_name == 'TSC':
-        for dataset_name in DATASET_NAMES:
+        for dataset_name in DATASET_NAMES:  # 遍历数据集 archive_name 中所有的活动文件夹 DATASET_NAMES
             root_dir_dataset = root_dir + '/archives/' + archive_name + '/' + dataset_name + '/'
             file_name = root_dir_dataset + dataset_name
             x_train, y_train = readucr(file_name + '_TRAIN')
             x_test, y_test = readucr(file_name + '_TEST')
 
             datasets_dict[dataset_name] = (x_train.copy(), y_train.copy(), x_test.copy(),
-                                           y_test.copy())
+                                           y_test.copy())  # 数据集, 包括训练和测试集
 
-            dataset_names_to_sort.append((dataset_name, len(x_train)))
+            dataset_names_to_sort.append((dataset_name, len(x_train)))  # 存储各个数据集训练集大小
 
         dataset_names_to_sort.sort(key=operator.itemgetter(1))
 
@@ -127,19 +127,19 @@ def save_test_duration(file_name, test_duration):
 
 def transform_labels(y_train, y_test):
     """
-    Transform label to min equal zero and continuous
-    For example if we have [1,3,4] --->  [0,1,2]
+    Transform label to min equal zero and continuous  将标签转换为最小等于零且连续
+    For example if we have [1,3,4] --->  [0,1,2]  例如，如果我们有 [1,3,4]-->[0,1,2]
     """
     # no validation split
     # init the encoder
-    encoder = LabelEncoder()
-    # concat train and test to fit
+    encoder = LabelEncoder()  # 在数据处理过程中，我们有时需要对不连续的数字或者文本进行数字化处理。
+    # concat train and test to fit  联结训练和测试
     y_train_test = np.concatenate((y_train, y_test), axis=0)
     # fit the encoder
     encoder.fit(y_train_test)
-    # transform to min zero and continuous labels
+    # transform to min zero and continuous labels  转换为最小零和连续标签
     new_y_train_test = encoder.transform(y_train_test)
-    # resplit the train and test
+    # resplit the train and test  重新切割训练集并进行测试
     new_y_train = new_y_train_test[0:len(y_train)]
     new_y_test = new_y_train_test[len(y_train):]
     return new_y_train, new_y_test

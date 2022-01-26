@@ -1,3 +1,7 @@
+"""
+数据集名称文件
+"""
+
 UNIVARIATE_DATASET_NAMES = ['50words', 'Adiac', 'ArrowHead', 'Beef', 'BeetleFly', 'BirdChicken', 'Car', 'CBF',
                             'ChlorineConcentration', 'CinC_ECG_torso', 'Coffee',
                             'Computers', 'Cricket_X', 'Cricket_Y', 'Cricket_Z', 'DiatomSizeReduction',
@@ -19,7 +23,9 @@ UNIVARIATE_DATASET_NAMES = ['50words', 'Adiac', 'ArrowHead', 'Beef', 'BeetleFly'
 UNIVARIATE_DATASET_NAMES = ['Meat', 'Coffee']
 
 UNIVARIATE_ARCHIVE_NAMES = ['TSC', 'InlineSkateXPs', 'SITS']
-UNIVARIATE_ARCHIVE_NAMES = ['TSC']
+UNIVARIATE_ARCHIVE_NAMES = ['TSC']   # ???
+
+# UNIVARIATE_ARCHIVE_NAMES_dict = ['UCR_TS_Archive_2015']
 
 SITS_DATASETS = ['SatelliteFull_TRAIN_c301', 'SatelliteFull_TRAIN_c200', 'SatelliteFull_TRAIN_c451',
                  'SatelliteFull_TRAIN_c89', 'SatelliteFull_TRAIN_c677', 'SatelliteFull_TRAIN_c59',

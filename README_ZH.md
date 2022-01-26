@@ -2,20 +2,20 @@
 
 这是我们发表在 [Data Mining and Knowledge Discovery ](https://www.springer.com/journal/10618)，也可在 [ArXiv](https://arxiv.org/pdf/1909.04939.pdf) 上找到。
 
-## Inception module
+## Inception 模块
 
 ![inception module](attra/img/README_ZH/inception-module.png)
 
-## Data
+## 数据
 
 本项目中使用的数据来自[UCR/UEA 档案](http://timeseriesclassification.com/TSC.zip)。
 我们使用了 [此处] (https://www.cs.ucr.edu/~eamonn/time_series_data/) 列出的 85 个数据集。
 
-## Requirements
+## 依赖
 
 您需要安装 [requirements.txt](https://github.com/hfawaz/InceptionTime/blob/master/requirements.txt) 文件中的以下软件包。
 
-## Code
+## 代码
 
 代码划分如下：
 
@@ -23,7 +23,7 @@
 * [utils](https://github.com/hfawaz/InceptionTime/tree/master/utils) 文件夹包含读取数据集和可视化绘图所需的功能。
 * [classifiers](https://github.com/hfawaz/InceptionTime/tree/master/classifiers) 文件夹包含两个python文件： (1) [inception.py](https://github.com/hfawaz/InceptionTime /tree/master/classifiers/inception.py) 包含初始网络； (2) [nne.py](https://github.com/hfawaz/InceptionTime/tree/master/classifiers/nne.py) 包含集成一组 Inception 网络的代码。
 
-### Adapt the code for your PC
+### 为您的 PC 调整代码
 
 您应该首先考虑更改以下 [行](https://github.com/hfawaz/InceptionTime/blob/c9a323c789984e3fb56e82ebb4eea6438611e59c/main.py#L83)。
 这是所有内容（数据和结果）的根文件，我们称之为 ```root_dir```。
@@ -36,24 +36,24 @@
 
 完成所有这些后，您可以继续在单个存档上运行。
 
-### Run InceptionTime on a single Archive
+### 在单个存档上运行 InceptionTime
 
 您应该发出以下命令 ```python3 main.py InceptionTime```。
 
-### Run the hyperparameter search for InceptionTime on a single Archive
+### 在单个存档上运行 InceptionTime 的超参数搜索
 
 您应该发出以下命令 ```python3 main.py InceptionTime_xp```。
 
-### Run the length experiment on the InlineSkate dataset
+### 在 InlineSkate 数据集上运行长度实验
 
 您应该首先发出以下命令 ```python3 main.py run_length_xps``` 来生成重采样。
 然后你应该发出以下命令 ```python3 main.py InceptionTime``` 但确保选择了 ```InlineSkateXPs`` [这里](https://github.com/hfawaz/InceptionTime/blob/ 690aa776081e77214db95ddd5c53c7ec3ac79d61/utils/constants.py#L22)。
 
-### Receptive field
+### 感受野
 
 要在合成数据集上运行实验，您应该发出以下命令 ```python3 receptive.py```。
 
-## Results
+## 结果
 
 每个数据集的结果（即准确性）将出现在 ```root_dir/results/nne/incepton-0-1-2-4-/UCR_TS_Archive_2015/dataset_name/df_metrics.csv```中。
 
@@ -66,13 +66,13 @@
 
 [results-inception-128.csv](https://github.com/hfawaz/InceptionTime/blob/master/results-inception-128.csv) 文件包含对来自 UCR 2018 档案。
 
-### Critical difference diagrams
+### 关键差异图
 
 如果您想生成这样的图表，请查看[此代码]（https://github.com/hfawaz/cd-diagram）！
 
 ![cd diagram](attra/img/README_ZH/cd-diagram.png)
 
-### Training time plots
+### 训练时间图
 
 这些图是使用 [matplotlib](https://matplotlib.org/) 库生成的。
 
@@ -80,7 +80,7 @@
 |:--------------------------------------------------------------:|:------------------------------------------------------------------:|
 | ![training time size](attra/img/README_ZH/train-time-size.png) | ![training time length](attra/img/README_ZH/train-time-length.png) |
 
-### Receptive field
+### 感受野
 
 这个图是通过发出这个命令 ```python3 receptive.py plot_results``` 生成的。
 
@@ -89,7 +89,7 @@
 |:----------------------------------------------------------------:|:----------------------------------------------------------------:|
 | ![receptive field](attra/img/README_ZH/plot-receptive-field.png) | ![training time length](attra/img/README_ZH/depth-vs-length.png) |
 
-## Reference
+## 引用
 
 如果您重复使用此作品，请引用：
 
@@ -102,7 +102,7 @@
 }
 ```
 
-## Acknowledgement
+## 致谢
 
 我们要感谢 [UCR/UEA 档案](http://timeseriesclassification.com/TSC.zip) 的提供者。
 我们还要感谢 NVIDIA 公司提供的 Quadro P6000 赠款和斯特拉斯堡 Mésocentre 提供对集群的访问权限。

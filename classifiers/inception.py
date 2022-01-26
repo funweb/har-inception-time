@@ -11,22 +11,22 @@ from utils.utils import save_test_duration
 class Classifier_INCEPTION:
 
     def __init__(self, output_directory, input_shape, nb_classes, verbose=False, build=True, batch_size=64,
-                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=1500):
+                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=150):
 
-        self.output_directory = output_directory
+        self.output_directory = output_directory  # 结果输出的目录
 
-        self.nb_filters = nb_filters
-        self.use_residual = use_residual
-        self.use_bottleneck = use_bottleneck
-        self.depth = depth
-        self.kernel_size = kernel_size - 1
-        self.callbacks = None
+        self.nb_filters = nb_filters  # ??
+        self.use_residual = use_residual  # 是否使用残差
+        self.use_bottleneck = use_bottleneck  #  是否使用 bottleneck
+        self.depth = depth  # 网络深度
+        self.kernel_size = kernel_size - 1  # ??
+        self.callbacks = None  # ??
         self.batch_size = batch_size
-        self.bottleneck_size = 32
-        self.nb_epochs = nb_epochs
+        self.bottleneck_size = 32  # bottleneck 大小
+        self.nb_epochs = nb_epochs  # epoch
 
         if build == True:
-            self.model = self.build_model(input_shape, nb_classes)
+            self.model = self.build_model(input_shape, nb_classes)  # 构建模型, 包括 inception 和 残差 层
             if (verbose == True):
                 self.model.summary()
             self.verbose = verbose
@@ -34,14 +34,14 @@ class Classifier_INCEPTION:
 
     def _inception_module(self, input_tensor, stride=1, activation='linear'):
 
-        if self.use_bottleneck and int(input_tensor.shape[-1]) > 1:
+        if self.use_bottleneck and int(input_tensor.shape[-1]) > 1:  # [-1] 是最后一个维度的 size
             input_inception = keras.layers.Conv1D(filters=self.bottleneck_size, kernel_size=1,
                                                   padding='same', activation=activation, use_bias=False)(input_tensor)
         else:
             input_inception = input_tensor
 
         # kernel_size_s = [3, 5, 8, 11, 17]
-        kernel_size_s = [self.kernel_size // (2 ** i) for i in range(3)]
+        kernel_size_s = [self.kernel_size // (2 ** i) for i in range(3)]  # 核大小 [40, 20, 10]
 
         conv_list = []
 
@@ -77,7 +77,7 @@ class Classifier_INCEPTION:
         x = input_layer
         input_res = input_layer
 
-        for d in range(self.depth):
+        for d in range(self.depth):  # 遍历深度
 
             x = self._inception_module(x)
 
@@ -111,6 +111,7 @@ class Classifier_INCEPTION:
             print('error no gpu')
             exit()
         # x_val and y_val are only used to monitor the test loss and NOT for training
+        # x_val 和 y_val 仅用于监测测试损失，不用于训练
 
         if self.batch_size is None:
             mini_batch_size = int(min(x_train.shape[0] / 10, 16))
@@ -135,10 +136,10 @@ class Classifier_INCEPTION:
         y_pred = self.predict(x_val, y_true, x_train, y_train, y_val,
                               return_df_metrics=False)
 
-        # save predictions
+        # save predictions  保存预测
         np.save(self.output_directory + 'y_pred.npy', y_pred)
 
-        # convert the predicted from binary to integer
+        # convert the predicted from binary to integer  将预测值从二进制转换为整数
         y_pred = np.argmax(y_pred, axis=1)
 
         df_metrics = save_logs(self.output_directory, hist, y_pred, y_true, duration,
