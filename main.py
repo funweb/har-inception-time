@@ -23,10 +23,10 @@ def prepare_data():
     # make the min to zero of labels  将标签的最小值设为零
     y_train, y_test = transform_labels(y_train, y_test)
 
-    # save orignal y because later we will use binary
+    # save orignal y because later we will use binary  保存原始y，因为稍后我们将使用二进制
     y_true = y_test.astype(np.int64)
     y_true_train = y_train.astype(np.int64)
-    # transform the labels from integers to one hot vectors
+    # transform the labels from integers to one hot vectors  将标签从整数转换为 one hot vectors
     enc = sklearn.preprocessing.OneHotEncoder()
     enc.fit(np.concatenate((y_train, y_test), axis=0).reshape(-1, 1))
     y_train = enc.transform(y_train.reshape(-1, 1)).toarray()
@@ -43,8 +43,8 @@ def prepare_data():
 def fit_classifier():
     input_shape = x_train.shape[1:]
 
-    classifier = create_classifier(classifier_name, input_shape, nb_classes,
-                                   output_directory, verbose=True)
+
+    classifier = create_classifier(classifier_name, input_shape, nb_classes, output_directory, verbose=True)
 
     classifier.fit(x_train, y_train, x_test, y_test, y_true)  # plot_test_acc 决定了是否在训练的时候查看验证效果
 
@@ -53,12 +53,11 @@ def create_classifier(classifier_name, input_shape, nb_classes, output_directory
                       verbose=False, build=True):
     if classifier_name == 'nne':
         from classifiers import nne
-        return nne.Classifier_NNE(output_directory, input_shape,
-                                  nb_classes, verbose)
+        return nne.Classifier_NNE(output_directory, input_shape, nb_classes, verbose)
+
     if classifier_name == 'inception':
         from classifiers import inception
-        return inception.Classifier_INCEPTION(output_directory, input_shape, nb_classes, verbose,
-                                              build=build)
+        return inception.Classifier_INCEPTION(output_directory, input_shape, nb_classes, verbose, build=build)
 
 
 def get_xp_val(xp):
@@ -84,8 +83,7 @@ def get_xp_val(xp):
 if __name__ == '__main__':
     # root_dir = '/b/home/uha/hfawaz-datas/temp-dl-tsc/'
     root_dir = '../datasets'
-    xps = ['use_bottleneck', 'use_residual', 'nb_filters', 'depth',
-           'kernel_size', 'batch_size']
+    xps = ['use_bottleneck', 'use_residual', 'nb_filters', 'depth', 'kernel_size', 'batch_size']
 
     if sys.argv[1] == 'InceptionTime':
         # run nb_iter_ iterations of Inception on the whole TSC archive
@@ -102,9 +100,9 @@ if __name__ == '__main__':
             if iter != 0:
                 trr = '_itr_' + str(iter)
 
-            tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + trr + '/'
+            tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + trr + '/'  # 临时结果文件夹
 
-            for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:
+            for dataset_name in utils.constants.dataset_names_for_archive[archive_name]:  # 逐个遍历数据集
                 print('\t\t\tdataset_name: ', dataset_name)
 
                 x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
@@ -113,7 +111,7 @@ if __name__ == '__main__':
 
                 temp_output_directory = create_directory(output_directory)
 
-                if temp_output_directory is None:
+                if temp_output_directory is None:  # 说明存在文件夹
                     print('Already_done', tmp_output_directory, dataset_name)
                     continue
 
@@ -124,7 +122,7 @@ if __name__ == '__main__':
                 # the creation of this directory means
                 create_directory(output_directory + '/DONE')
 
-        # run the ensembling of these iterations of Inception
+        # run the ensembling of these iterations of Inception  运行这些 Inception 迭代的集成
         classifier_name = 'nne'
 
         datasets_dict = read_all_datasets(root_dir, archive_name)
@@ -145,6 +143,8 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'InceptionTime_xp':
         # this part is for running inception with the different hyperparameters
         # listed in the paper, on the whole TSC archive
+        # 这部分用于使用不同的超参数运行 inception
+        # 列在论文中，关于整个 TSC 档案
         archive_name = 'TSC'
         classifier_name = 'inception'
         max_iterations = 5
@@ -178,6 +178,7 @@ if __name__ == '__main__':
                         x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
 
                         # check if data is too big for this gpu
+                        # 检查这个 gpu 的数据是否太大
                         size_data = x_train.shape[0] * x_train.shape[1]
 
                         temp_output_directory = create_directory(output_directory)
@@ -229,6 +230,7 @@ if __name__ == '__main__':
 
     elif sys.argv[1] == 'run_length_xps':
         # this is to generate the archive for the length experiments
+        # 这是为长度实验生成存档
         run_length_xps(root_dir)
 
     elif sys.argv[1] == 'generate_results_csv':
@@ -236,11 +238,15 @@ if __name__ == '__main__':
         itr = '-0-1-2-3-4-'
         inceptionTime = 'nne/inception'
         # add InceptionTime: an ensemble of 5 Inception networks
+        # 添加 InceptionTime：5 个 Inception 网络的集合
         clfs.append(inceptionTime + itr)
         # add InceptionTime for each hyperparameter study
+        # 为每个超参数研究添加 InceptionTime
         for xp in xps:
             xp_arr = get_xp_val(xp)
             for xp_val in xp_arr:
                 clfs.append(inceptionTime + '/' + xp + '/' + str(xp_val) + itr)
         df = generate_results_csv('results.csv', root_dir, clfs)
         print(df)
+
+    print("success...")

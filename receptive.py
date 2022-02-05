@@ -105,9 +105,11 @@ if len(sys.argv) == 1:
                     y_train, y_test = transform_labels(y_train, y_test)
 
                     # save orignal y because later we will use binary
+                    # 保存原始y，因为稍后我们将使用二进制
                     y_true = y_test.astype(np.int64)
                     y_true_train = y_train.astype(np.int64)
                     # transform the labels from integers to one hot vectors
+                    # 将标签从整数转换为 one hot vectors
                     enc = sklearn.preprocessing.OneHotEncoder()
                     enc.fit(np.concatenate((y_train, y_test), axis=0).reshape(-1, 1))
                     y_train = enc.transform(y_train.reshape(-1, 1)).toarray()

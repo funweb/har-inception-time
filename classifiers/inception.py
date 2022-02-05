@@ -1,4 +1,6 @@
 # resnet model
+import os
+
 import keras
 import numpy as np
 import time
@@ -11,7 +13,7 @@ from utils.utils import save_test_duration
 class Classifier_INCEPTION:
 
     def __init__(self, output_directory, input_shape, nb_classes, verbose=False, build=True, batch_size=64,
-                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=150):
+                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=1500):
 
         self.output_directory = output_directory  # 结果输出的目录
 
@@ -97,7 +99,7 @@ class Classifier_INCEPTION:
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=50,
                                                       min_lr=0.0001)
 
-        file_path = self.output_directory + 'best_model.hdf5'
+        file_path = os.path.join(self.output_directory, 'best_model.hdf5')
 
         model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path, monitor='loss',
                                                            save_best_only=True)
@@ -106,7 +108,7 @@ class Classifier_INCEPTION:
 
         return model
 
-    def fit(self, x_train, y_train, x_val, y_val, y_true, plot_test_acc=False):
+    def fit(self, x_train, y_train, x_val, y_val, y_true, plot_test_acc=True):
         if len(keras.backend.tensorflow_backend._get_available_gpus()) == 0:
             print('error no gpu')
             exit()
@@ -138,12 +140,13 @@ class Classifier_INCEPTION:
 
         # save predictions  保存预测
         np.save(self.output_directory + 'y_pred.npy', y_pred)
+        np.savetxt(self.output_directory + 'y_pred.txt', y_pred)
 
         # convert the predicted from binary to integer  将预测值从二进制转换为整数
         y_pred = np.argmax(y_pred, axis=1)
 
-        df_metrics = save_logs(self.output_directory, hist, y_pred, y_true, duration,
-                               plot_test_acc=plot_test_acc)
+        df_metrics = save_logs(self.output_directory, hist, y_pred, y_true, duration, plot_test_acc=plot_test_acc)
+
 
         keras.backend.clear_session()
 
@@ -151,7 +154,7 @@ class Classifier_INCEPTION:
 
     def predict(self, x_test, y_true, x_train, y_train, y_test, return_df_metrics=True):
         start_time = time.time()
-        model_path = self.output_directory + 'best_model.hdf5'
+        model_path = os.path.join(self.output_directory, 'best_model.hdf5')
         model = keras.models.load_model(model_path)
         y_pred = model.predict(x_test, batch_size=self.batch_size)
         if return_df_metrics:

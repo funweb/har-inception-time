@@ -17,9 +17,10 @@ import utils
 from utils.constants import UNIVARIATE_DATASET_NAMES as DATASET_NAMES
 from utils.constants import UNIVARIATE_ARCHIVE_NAMES  as ARCHIVE_NAMES
 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
 from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
+from sklearn.metrics import recall_score, f1_score
 from sklearn.preprocessing import LabelEncoder
 
 
@@ -71,8 +72,8 @@ def read_all_datasets(root_dir, archive_name):
     dataset_names_to_sort = []
 
     if archive_name == 'TSC':
-        for dataset_name in DATASET_NAMES:  # 遍历数据集 archive_name 中所有的活动文件夹 DATASET_NAMES
-            root_dir_dataset = root_dir + '/archives/' + archive_name + '/' + dataset_name + '/'
+        for dataset_name in DATASET_NAMES:  # 遍历数据集 archive_name 中所有的活动文件夹.  这里的 DATASET_NAMES 保存的是想要遍历活动名称
+            root_dir_dataset = root_dir + '/archives/' + archive_name + '/' + dataset_name + '/'  #  ..\datasets\archives\TSC\[Meat]
             file_name = root_dir_dataset + dataset_name
             x_train, y_train = readucr(file_name + '_TRAIN')
             x_test, y_test = readucr(file_name + '_TEST')
@@ -82,7 +83,7 @@ def read_all_datasets(root_dir, archive_name):
 
             dataset_names_to_sort.append((dataset_name, len(x_train)))  # 存储各个数据集训练集大小
 
-        dataset_names_to_sort.sort(key=operator.itemgetter(1))
+        dataset_names_to_sort.sort(key=operator.itemgetter(1))  # 排序数据集列表: eg. [('Coffee', 28), ('Meat', 60)]
 
         for i in range(len(DATASET_NAMES)):
             DATASET_NAMES[i] = dataset_names_to_sort[i][0]
@@ -97,8 +98,8 @@ def read_all_datasets(root_dir, archive_name):
             x_test = np.load(root_dir_dataset + 'x_test.npy')
             y_test = np.load(root_dir_dataset + 'y_test.npy')
 
-            datasets_dict[dataset_name] = (x_train.copy(), y_train.copy(), x_test.copy(),
-                                           y_test.copy())
+            datasets_dict[dataset_name] = (x_train.copy(), y_train.copy(), x_test.copy(), y_test.copy())  # 注意, 这里就是数据集的格式了.
+
     elif archive_name == 'SITS':
         return read_sits_xps(root_dir)
     else:
@@ -109,13 +110,25 @@ def read_all_datasets(root_dir, archive_name):
 
 
 def calculate_metrics(y_true, y_pred, duration):
-    res = pd.DataFrame(data=np.zeros((1, 4), dtype=np.float), index=[0],
-                       columns=['precision', 'accuracy', 'recall', 'duration'])
+    res = pd.DataFrame(data=np.zeros((1, 5), dtype=np.float), index=[0],
+                       columns=['precision', 'accuracy', 'recall', 'f1', 'duration'])
     res['precision'] = precision_score(y_true, y_pred, average='macro')
     res['accuracy'] = accuracy_score(y_true, y_pred)
     res['recall'] = recall_score(y_true, y_pred, average='macro')
+    res['f1'] = f1_score(y_true, y_pred, average='macro')
     res['duration'] = duration
-    return res
+
+    Confusion_matrix = confusion_matrix(y_true, y_pred)
+
+    multiply_evaluation = classification_report(y_true, y_pred, digits=6)  # 多个评价指标
+
+    dict_evaluation = {}
+    dict_evaluation.update({'multiply_evaluation': multiply_evaluation})
+    dict_evaluation.update({'Confusion_matrix': str(Confusion_matrix)})
+    dict_evaluation.update({'res': res.to_csv()})
+
+
+    return dict_evaluation
 
 
 def save_test_duration(file_name, test_duration):
@@ -142,6 +155,11 @@ def transform_labels(y_train, y_test):
     # resplit the train and test  重新切割训练集并进行测试
     new_y_train = new_y_train_test[0:len(y_train)]
     new_y_test = new_y_train_test[len(y_train):]
+
+    # 因为在前期我已经经过了编码, 并且类别数是从0开始的. 因此, 这里就没必要用他的了.
+    # 但是我感觉他的也不错, 因此在这里判断一下, 进一步验证前期编码的正确;
+    # assert len(new_y_train_test) == sum(new_y_train_test == y_train_test), "重新编码了. 请查看一下..."
+
     return new_y_train, new_y_test
 
 
@@ -194,7 +212,12 @@ def save_logs(output_directory, hist, y_pred, y_true, duration,
     hist_df.to_csv(output_directory + 'history.csv', index=False)
 
     df_metrics = calculate_metrics(y_true, y_pred, duration)
-    df_metrics.to_csv(output_directory + 'df_metrics.csv', index=False)
+    # df_metrics.to_csv(output_directory + 'df_metrics.csv', index=False)
+    import json
+    with open(os.path.join(output_directory, 'df_metrics.csv'), "w", encoding="utf-8") as fw:
+        fw.writelines(df_metrics["res"])
+    with open(os.path.join(output_directory, 'df_metrics.json'), "w", encoding="utf-8") as fw:
+        json.dump(df_metrics, fw)
 
     index_best_model = hist_df['loss'].idxmin()
     row_best_model = hist_df.loc[index_best_model]
