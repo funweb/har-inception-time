@@ -1,5 +1,5 @@
 DATASETS_CONSTANT = {
-    "base_dir": "F:/PaperEdit/HARedit/datasets/casas",  # 相对路径会更好
+    "base_dir": "../datasets/casas",  # 相对路径会更好
     "names": ['cairo', 'milan', 'kyoto7', 'kyoto8', 'kyoto11'],
     "short_len": 5,
     "ksplit": 3,
