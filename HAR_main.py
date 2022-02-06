@@ -192,7 +192,7 @@ def train_val(dataset_name, distance_int, archive_name="casas", nb_iter_=5, leng
 
             # the creation of this directory means
             # create_directory(output_directory + '/DONE')
-            with open(complete_flag_file, "w", encoding="utf-8") as fw:
+            with open(complete_flag_file, "w", encoding="utf-8") as fw:  # 这个文件的内容应该是运行程序所有参数的设置...因此, 是否超参数都应该设置成为字典呢?
                 pass
 
         # run the ensembling of these iterations of Inception  运行这些 Inception 迭代的集成
