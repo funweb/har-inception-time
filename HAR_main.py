@@ -165,10 +165,11 @@ def train_val(dict_config_cus):
             # 这里的超参数还需要调整
             cutdatadir = os.path.join(datadir, str(METHOD_PARAMETER_TEMPLATE["ksplit"]))
 
-            x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = load_data(METHOD_PARAMETER_TEMPLATE["dataset_name"],
-                                                                                                cutdatadir,
-                                                                                                METHOD_PARAMETER_TEMPLATE["data_lenght"],
-                                                                                                k)
+            x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = load_data(
+                METHOD_PARAMETER_TEMPLATE["dataset_name"],
+                cutdatadir,
+                METHOD_PARAMETER_TEMPLATE["data_lenght"],
+                k)
             # ---------------------------------
 
             output_directory = os.path.join(tmp_output_directory)
@@ -181,7 +182,9 @@ def train_val(dict_config_cus):
 
             complete_flag_file = os.path.join(output_directory, METHOD_PARAMETER_TEMPLATE["complete_flag"])
             if os.path.exists(complete_flag_file):  # 说明存在文件夹  #TODO: 能够说明已经运行完毕了, 不错.
-                print(general.colorstr("green", 'Already_done: {}:{}'.format(tmp_output_directory, METHOD_PARAMETER_TEMPLATE["dataset_name"])))
+                print(general.colorstr("green", 'Already_done: {}:{}'.format(
+                    tmp_output_directory,
+                    METHOD_PARAMETER_TEMPLATE["dataset_name"])))
                 continue
 
             fit_classifier(x_train, y_train, x_test, y_test, y_true, classifier_name, nb_classes, output_directory)
@@ -193,7 +196,10 @@ def train_val(dict_config_cus):
 
         # run the ensembling of these iterations of Inception  运行这些 Inception 迭代的集成
         classifier_name = 'nne'
-        print(general.colorstr("nne: dataname: {}, distant: {}, ksplit: ".format(METHOD_PARAMETER_TEMPLATE["dataset_name"], METHOD_PARAMETER_TEMPLATE["distance_int"], k)))
+        print(general.colorstr("nne: dataname: {}, distant: {}, ksplit: ".format(
+            METHOD_PARAMETER_TEMPLATE["dataset_name"],
+            METHOD_PARAMETER_TEMPLATE["distance_int"],
+            k)))
 
         tmp_output_directory = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"],
                                             "results",
@@ -222,8 +228,6 @@ def train_val(dict_config_cus):
         df_metrics_temp = pd.read_csv(os.path.join(classifier_class.output_directory, "df_metrics.csv"))
 
         df_metrics = pd.concat([df_metrics, df_metrics_temp])
-
-        print('\t\t\t\tDONE')
 
     # 计算k折交叉的均值和方差
 
