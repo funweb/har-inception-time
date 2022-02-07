@@ -1,6 +1,8 @@
 import json
 import os
 
+import emoji
+
 from tools import general
 from tools.configure.constants import DATASETS_CONSTANT, INCEPTION_CONSTANT, METHOD_PARAMETER_TEMPLATE
 # from utils.constants import UNIVARIATE_ARCHIVE_NAMES as ARCHIVE_NAMES
@@ -32,7 +34,7 @@ def load_data(data_name, cutdatadir, data_lenght=2000, k=2):
     data_type = 'train'
     data_x_path = os.path.join(cutdatadir, data_name + '-' + data_type + '-x-' + str(k) + '.npy')
 
-    print("\n\ndata_x_path: {}\n\n".format(data_x_path))
+    print(emoji.emojize("\n:trade_mark: data_x_path: {}\n\n".format(data_x_path)))
 
     x_train = np.load(data_x_path, allow_pickle=True)
 
@@ -145,7 +147,7 @@ def train_val(dict_config_cus):
         # 在整个 TSC 存档上运行 Inception 的 nb_iter_ 迭代
 
         for iter in range(METHOD_PARAMETER_TEMPLATE["nb_iter_"]):
-            print('\t\titer', iter)
+            print(emoji.emojize(":repeat_single_button: iter: {}".format(iter)))
 
             trr = '_itr_' + str(iter)
 
@@ -159,7 +161,7 @@ def train_val(dict_config_cus):
                                                 str(k),
                                                 str(trr))  # 临时结果文件夹
 
-            print('\t\t\tdataset_name: ', METHOD_PARAMETER_TEMPLATE["dataset_name"])
+            print(emoji.emojize(":white_exclamation_mark: dataset_name: {}").format(METHOD_PARAMETER_TEMPLATE["dataset_name"]))
 
             # ---------------------------------
             # 这里的超参数还需要调整
@@ -185,8 +187,6 @@ def train_val(dict_config_cus):
                 continue
 
             fit_classifier(x_train, y_train, x_test, y_test, y_true, classifier_name, nb_classes, output_directory)
-
-            print('\t\t\t\tnne: DONE')
 
             # the creation of this directory means
             # create_directory(output_directory + '/DONE')
