@@ -147,7 +147,7 @@ def train_val(dict_config_cus):
         # 在整个 TSC 存档上运行 Inception 的 nb_iter_ 迭代
 
         for iter in range(METHOD_PARAMETER_TEMPLATE["nb_iter_"]):
-            print(emoji.emojize(":repeat_single_button: iter: {}/{}".format(iter, METHOD_PARAMETER_TEMPLATE["nb_iter_"])))
+            print(emoji.emojize(":repeat_single_button: iter: {}/{}".format(iter, METHOD_PARAMETER_TEMPLATE["nb_iter_"]-1)))
 
             trr = '_itr_' + str(iter)
 
@@ -227,7 +227,7 @@ def train_val(dict_config_cus):
 
         df_metrics_temp = pd.read_csv(os.path.join(classifier_class.output_directory, "df_metrics.csv"))
 
-        print(emoji.emojize(":bookmark_tabs: {}: {}\n\n".format(general.colorstr("red", "df_metrics_temp"), df_metrics_temp)))
+        print(emoji.emojize(":bookmark_tabs: {}: {}\n\n".format(general.colorstr("red", "df_metrics_temp\n"), df_metrics_temp)))
 
         df_metrics = pd.concat([df_metrics, df_metrics_temp])
 
@@ -245,6 +245,9 @@ def train_val(dict_config_cus):
     print(s)
     with open(os.path.join(os.path.join(classifier_class.output_directory, ".."), "ksplit_ave.csv"), 'w', encoding="utf-8") as fw:
         fw.writelines(s)
+
+    print(emoji.emojize(" :check_mark: done."))
+
 
     ############################################### main
 
