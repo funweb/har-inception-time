@@ -254,7 +254,7 @@ if __name__ == '__main__':
         "nb_epochs": nb_epochs,
         "batch_size": batch_size,
 
-        "reTrain": True,
+        "reTrain": False,
     }
 
     general.Merge(dict_config_cus, model_parameter_dict)
