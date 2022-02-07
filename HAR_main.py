@@ -196,7 +196,7 @@ def train_val(dict_config_cus):
 
         # run the ensembling of these iterations of Inception  运行这些 Inception 迭代的集成
         classifier_name = 'nne'
-        print(general.colorstr("nne: dataname: {}, distant: {}, ksplit: ".format(
+        print(general.colorstr("nne: dataname: {}, distant: {}, ksplit: {}".format(
             METHOD_PARAMETER_TEMPLATE["dataset_name"],
             METHOD_PARAMETER_TEMPLATE["distance_int"],
             k)))
@@ -226,6 +226,8 @@ def train_val(dict_config_cus):
                                           output_directory)
 
         df_metrics_temp = pd.read_csv(os.path.join(classifier_class.output_directory, "df_metrics.csv"))
+
+        print(emoji.emojize(":bookmark_tabs: {}: {}\n\n".format(general.colorstr("red", "df_metrics_temp"), df_metrics_temp)))
 
         df_metrics = pd.concat([df_metrics, df_metrics_temp])
 
