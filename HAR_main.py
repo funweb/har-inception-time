@@ -123,6 +123,7 @@ def train_val(dict_config_cus):
         if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '1':
             # 使用第0块GPU
             os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+            print("aaaaaaaaaddddddd")
 
         else:
             os.environ["CUDA_VISIBLE_DEVICES"] = "1"
