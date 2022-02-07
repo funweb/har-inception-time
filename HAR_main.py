@@ -27,7 +27,7 @@ def load_data(data_name, cutdatadir, data_lenght=2000, k=2):
     单变量: 是否将单变量转换为适用于 卷积 的格式
     """
 
-    assert 2000 > data_lenght > 0, "Please check data_lenght: {} ".format(data_lenght)  # 长度要适合
+    assert 2001 > data_lenght > 0, "Please check data_lenght: {} ".format(data_lenght)  # 长度要适合
 
     data_type = 'train'
     data_x_path = os.path.join(cutdatadir, data_name + '-' + data_type + '-x-' + str(k) + '.npy')
