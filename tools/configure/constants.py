@@ -89,6 +89,7 @@ METHOD_PARAMETER_TEMPLATE = {
     "patience": 200,  # 提前停止
 
     "reTrain": True,
+    "calculation_unit": 0,
     "complete_flag": "configParameter.json",
     "verbose": "1",
     "identifier": "20220201",

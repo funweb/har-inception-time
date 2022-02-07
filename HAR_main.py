@@ -240,6 +240,8 @@ if __name__ == '__main__':
     nb_epochs = 15
     batch_size = 64
 
+    calculation_unit = 0
+
     # 模型私有参数
     model_parameter_dict = INCEPTION_CONSTANT
 
@@ -254,7 +256,8 @@ if __name__ == '__main__':
         "nb_epochs": nb_epochs,
         "batch_size": batch_size,
 
-        "reTrain": False,
+        "reTrain": True,
+        "calculation_unit": calculation_unit,
     }
 
     general.Merge(dict_config_cus, model_parameter_dict)
