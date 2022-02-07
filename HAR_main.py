@@ -34,7 +34,7 @@ def load_data(data_name, cutdatadir, data_lenght=2000, k=2):
     data_type = 'train'
     data_x_path = os.path.join(cutdatadir, data_name + '-' + data_type + '-x-' + str(k) + '.npy')
 
-    print(emoji.emojize(":trade_mark: data_x_path: {}".format(data_x_path)))
+    print(emoji.emojize(":check_mark_button: data_x_path: {}".format(data_x_path)))
 
     x_train = np.load(data_x_path, allow_pickle=True)
 
