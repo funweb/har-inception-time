@@ -1,5 +1,8 @@
 # resnet model
 import os
+import shutil
+from glob import glob
+import re
 
 import keras
 import numpy as np
@@ -99,10 +102,17 @@ class Classifier_INCEPTION:
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=50,
                                                       min_lr=0.0001)
 
-        file_path = os.path.join(self.output_directory, 'best_model.hdf5')
+        # file_path = os.path.join(self.output_directory, 'best_model.hdf5')
 
-        model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path, monitor='loss',
-                                                           save_best_only=True)
+        file_path = os.path.join(self.output_directory, "saved-model-{epoch:02d}-{loss:.2f}-{val_acc:.2f}.hdf5")
+
+        # checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=False, mode='max')
+
+        model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
+                                                           monitor='loss', verbose=1,
+                                                           save_best_only=False,
+                                                           mode='min', period=3,
+                                                           )
 
         self.callbacks = [reduce_lr, model_checkpoint]
 
@@ -136,6 +146,21 @@ class Classifier_INCEPTION:
         duration = time.time() - start_time
 
         self.model.save(self.output_directory + 'last_model.hdf5')
+
+        min_loss = 128
+        best_model_name = ""
+        pattern = r'saved-model-(\d+)-([1-9]\d*\.\d*|0\.\d*[1-9]\d*)-([1-9]\d*\.\d*|0\.\d*[1-9]\d*).hdf5'
+
+        prog = re.compile(pattern)
+        for hdf5_name in glob("{}/saved*hdf5".format(self.output_directory)):
+            matchObj = prog.match(os.path.basename(hdf5_name))
+            c_epoch = matchObj.group(1)
+            c_loss = matchObj.group(2)
+            c_acc = matchObj.group(3)
+            if float(c_loss) < min_loss:
+                best_model_name = hdf5_name
+        shutil.copy(os.path.join(self.output_directory, os.path.basename(best_model_name)), os.path.join(self.output_directory, "best_model.hdf5"))
+
 
         y_pred = self.predict(x_val, y_true, x_train, y_train, y_val,
                               return_df_metrics=False)
