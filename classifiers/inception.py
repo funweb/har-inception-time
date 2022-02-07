@@ -112,7 +112,7 @@ class Classifier_INCEPTION:
         model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
                                                            monitor='loss', verbose=1,
                                                            save_best_only=False,
-                                                           mode='min', period=3,
+                                                           mode='min', period=300,
                                                            )
 
         self.callbacks = [reduce_lr, model_checkpoint]
