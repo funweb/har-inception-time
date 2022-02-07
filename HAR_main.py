@@ -118,7 +118,6 @@ def train_val(dict_config_cus):
 
     if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '0':
         os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
     else:
         if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '1':
             # 使用第0块GPU
