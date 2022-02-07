@@ -68,7 +68,7 @@ def lab_or_notebook():
         return "lab"
 
 
-def ipy_nb_name(token):
+def ipy_nb_name(token_lists):
     """ Returns the short name of the notebook w/o .ipynb
         or get a FileNotFoundError exception if it cannot be determined
         NOTE: works only when the security is token-based or there is also no password
@@ -85,21 +85,28 @@ def ipy_nb_name(token):
 
     #     from notebook import notebookapp as app
     for srv in app.list_running_servers():
-        try:
+        for token in token_lists:
             srv['token'] = token
-            if srv['token'] == '' and not srv['password']:  # No token and no password, ahem...
-                req = urllib.request.urlopen(srv['url'] + 'api/sessions')
-                print('no token or password')
-            else:
-                req = urllib.request.urlopen(srv['url'] + 'api/sessions?token=' + srv['token'])
-            sessions = json.load(req)
-            for sess in sessions:
-                if sess['kernel']['id'] == kernel_id:
-                    nb_path = sess['notebook']['path']
-                    return ntpath.basename(nb_path).replace('.ipynb', '')  # handles any OS
-        except:
-            pass  # There may be stale entries in the runtime directory
-    raise FileNotFoundError("Can't identify the notebook name")
+
+            try:
+                # print(token)
+                if srv['token'] == '' and not srv['password']:  # No token and no password, ahem...
+                    req = urllib.request.urlopen(srv['url'] + 'api/sessions')
+                    print('no token or password')
+                else:
+                    req = urllib.request.urlopen(srv['url'] + 'api/sessions?token=' + srv['token'])
+            except:
+                pass
+                # print("Token is error")
+
+        sessions = json.load(req)
+
+        for sess in sessions:
+            if sess['kernel']['id'] == kernel_id:
+                nb_path = sess['notebook']['path']
+                return ntpath.basename(nb_path).replace('.ipynb', '')  # handles any OS
+
+    raise FileNotFoundError("Can't identify the notebook name, Please check [token]")
 
 
 if __name__ == '__main__':
