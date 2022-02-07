@@ -161,8 +161,6 @@ def train_val(dict_config_cus):
                                                 str(k),
                                                 str(trr))  # 临时结果文件夹
 
-            print(emoji.emojize(":white_exclamation_mark: dataset_name: {}").format(METHOD_PARAMETER_TEMPLATE["dataset_name"]))
-
             # ---------------------------------
             # 这里的超参数还需要调整
             cutdatadir = os.path.join(datadir, str(METHOD_PARAMETER_TEMPLATE["ksplit"]))
@@ -183,7 +181,7 @@ def train_val(dict_config_cus):
 
             complete_flag_file = os.path.join(output_directory, METHOD_PARAMETER_TEMPLATE["complete_flag"])
             if os.path.exists(complete_flag_file):  # 说明存在文件夹  #TODO: 能够说明已经运行完毕了, 不错.
-                print('Already_done', tmp_output_directory, METHOD_PARAMETER_TEMPLATE["dataset_name"])
+                print(general.colorstr("green", 'Already_done: {}:{}'.format(tmp_output_directory, METHOD_PARAMETER_TEMPLATE["dataset_name"])))
                 continue
 
             fit_classifier(x_train, y_train, x_test, y_test, y_true, classifier_name, nb_classes, output_directory)
@@ -195,18 +193,14 @@ def train_val(dict_config_cus):
 
         # run the ensembling of these iterations of Inception  运行这些 Inception 迭代的集成
         classifier_name = 'nne'
-        print("nne_________________")
-
-        # datasets_dict = read_all_datasets(root_dir, archive_name)
-
-        # tmp_output_directory = root_dir + '/results/' + classifier_name + '/' + archive_name + '/'
+        print(general.colorstr("nne: dataname: {}, distant: {}, ksplit: ".format(METHOD_PARAMETER_TEMPLATE["dataset_name"], METHOD_PARAMETER_TEMPLATE["distance_int"], k)))
 
         tmp_output_directory = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"],
                                             "results",
                                             classifier_name,
                                             METHOD_PARAMETER_TEMPLATE["archive_name"])  # 临时结果文件夹
 
-        print('\t\t\tdataset_name: ', METHOD_PARAMETER_TEMPLATE["dataset_name"])
+        # print(emoji.emojize(":white_exclamation_mark: dataset_name: {}").format(METHOD_PARAMETER_TEMPLATE["dataset_name"]))
 
         # x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = prepare_data()
         x_train, y_train, x_test, y_test, y_true, nb_classes, y_true_train, enc = load_data(
