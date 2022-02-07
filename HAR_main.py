@@ -15,6 +15,7 @@ import utils
 import numpy as np
 import sys
 import sklearn
+import tensorflow as tf
 
 
 # Load data in the following format:
@@ -114,6 +115,24 @@ def create_classifier(classifier_name, input_shape, nb_classes, output_directory
 def train_val(dict_config_cus):
 
     general.Merge(METHOD_PARAMETER_TEMPLATE, dict_config_cus)
+
+    if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '0':
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+    else:
+        if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '1':
+            # 使用第0块GPU
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+        else:
+            os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        session = tf.Session(config=config)
+
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 显示信息的等级  3：只显示error
+
 
     datadir = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"], 'ende',
                            METHOD_PARAMETER_TEMPLATE["dataset_name"],
@@ -240,7 +259,7 @@ if __name__ == '__main__':
     nb_epochs = 15
     batch_size = 64
 
-    calculation_unit = 0
+    calculation_unit = "1"
 
     # 模型私有参数
     model_parameter_dict = INCEPTION_CONSTANT

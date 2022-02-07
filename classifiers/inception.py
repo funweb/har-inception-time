@@ -110,8 +110,10 @@ class Classifier_INCEPTION:
 
     def fit(self, x_train, y_train, x_val, y_val, y_true, plot_test_acc=True):
         if len(keras.backend.tensorflow_backend._get_available_gpus()) == 0:
-            print('error no gpu')
-            exit()
+            print('notice: These is no gpu')
+            time.sleep(30)
+            # exit()
+
         # x_val and y_val are only used to monitor the test loss and NOT for training
         # x_val 和 y_val 仅用于监测测试损失，不用于训练
 
