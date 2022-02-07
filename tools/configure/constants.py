@@ -34,6 +34,11 @@ EXPLORE_CONSTANT = {
     "input_dims": [64, 128, 256]
 }
 
+# jupyter
+JUPYTER_TOKEN = {
+    "token_lists": ["root", "8786ba7fd6db486eb13a6e4e79d5951a"]
+}
+
 # methods
 # _CONSTANT = {
 WCNN_CONSTANT = {
