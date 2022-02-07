@@ -33,7 +33,8 @@ class Classifier_INCEPTION:
         if build == True:
             self.model = self.build_model(input_shape, nb_classes)  # 构建模型, 包括 inception 和 残差 层
             if (verbose == True):
-                self.model.summary()
+                pass
+                # self.model.summary()
             self.verbose = verbose
             self.model.save_weights(self.output_directory + 'model_init.hdf5')
 

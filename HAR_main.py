@@ -86,7 +86,7 @@ def load_data(data_name, cutdatadir, data_lenght=2000, k=2):
 def fit_classifier(x_train, y_train, x_test, y_test, y_true, classifier_name, nb_classes, output_directory):
     input_shape = x_train.shape[1:]
 
-    classifier = create_classifier(classifier_name, input_shape, nb_classes, output_directory, verbose=False)  # 这个 verbose 是总的
+    classifier = create_classifier(classifier_name, input_shape, nb_classes, output_directory, verbose=True)  # 这个 verbose 是总的
 
     classifier.fit(x_train, y_train, x_test, y_test, y_true)  # plot_test_acc 决定了是否在训练的时候查看验证效果
 
