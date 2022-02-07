@@ -43,5 +43,18 @@ def create_folder(path='./new', remake=False):
         os.makedirs(path)
 
 
+# Merge the two dictionaries, that is, the parameters required by the algorithm
+def Merge(dict_config, dict_config_cus):
+    dict_config.update(dict_config_cus)
+    for k in dict_config:  # 保证值不为空, 也就是保证参数的有效性
+        assert dict_config[k] != "", "Please set value for: {}".format(k)
+    return dict_config
+
+
+def reTrain(p):
+    if os.path.exists(p):
+        shutil.rmtree(p)
+
+
 if __name__ == '__main__':
     print(load_config("configure/config.yaml"))
