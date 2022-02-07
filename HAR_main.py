@@ -34,7 +34,7 @@ def load_data(data_name, cutdatadir, data_lenght=2000, k=2):
     data_type = 'train'
     data_x_path = os.path.join(cutdatadir, data_name + '-' + data_type + '-x-' + str(k) + '.npy')
 
-    print(emoji.emojize("\n:trade_mark: data_x_path: {}\n\n".format(data_x_path)))
+    print(emoji.emojize(":trade_mark: data_x_path: {}".format(data_x_path)))
 
     x_train = np.load(data_x_path, allow_pickle=True)
 
@@ -147,7 +147,7 @@ def train_val(dict_config_cus):
         # 在整个 TSC 存档上运行 Inception 的 nb_iter_ 迭代
 
         for iter in range(METHOD_PARAMETER_TEMPLATE["nb_iter_"]):
-            print(emoji.emojize(":repeat_single_button: iter: {}".format(iter)))
+            print(emoji.emojize(":repeat_single_button: iter: {}/{}".format(iter, METHOD_PARAMETER_TEMPLATE["nb_iter_"])))
 
             trr = '_itr_' + str(iter)
 
