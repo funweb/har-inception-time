@@ -209,6 +209,7 @@ class ModelCheckpoint_cus(Callback):
         self.save_best_only_period = save_best_only_period
         self.best_period = self.init_value
         self.best_model_period = ""
+        self.filepath_period = ""
 
     def on_epoch_end(self, epoch, logs=None):
         logs = logs or {}
@@ -222,10 +223,10 @@ class ModelCheckpoint_cus(Callback):
         if (self.period - (epoch % self.period) < self.period*0.2) and (epoch % int(self.period*0.2 / 6) == 0):  # 为了节省算力, 仅仅抽查.  取最后的20%中抽 X 个
             if self.monitor_op(current, self.best_period):
 
-                filepath_period = os.path.join(os.path.dirname(self.filepath), "Pbest-"+os.path.basename(self.filepath)).format(epoch=epoch + 1, **logs)
+                self.filepath_period = os.path.join(os.path.dirname(self.filepath), "Pbest-"+os.path.basename(self.filepath)).format(epoch=epoch + 1, **logs)
                 if self.verbose > 0:
                     print('\nEpoch %05d: %s improved from %0.5f to %0.5f, saving model to %s'
-                          % (epoch + 1, self.monitor, self.best, current, filepath_period))
+                          % (epoch + 1, self.monitor, self.best, current, self.filepath_period))
                 self.best_period = current
                 self.best_model_period = copy.deepcopy(self.model)  # 仅仅保存在内存中, 而不是写到文件
 
@@ -255,10 +256,10 @@ class ModelCheckpoint_cus(Callback):
                     print('\nEpoch %05d: saving model to %s' % (epoch + 1, filepath))
                 if self.save_weights_only:
                     self.model.save_weights(filepath, overwrite=True)
-                    self.best_model_period.save_weights(filepath_period, overwrite=True)
+                    self.best_model_period.save_weights(self.filepath_period, overwrite=True)
                 else:
                     self.model.save(filepath, overwrite=True)
-                    self.best_model_period.save(filepath_period, overwrite=True)
+                    self.best_model_period.save(self.filepath_period, overwrite=True)
 
 
 if __name__ == '__main__':
