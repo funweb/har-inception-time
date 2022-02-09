@@ -153,7 +153,9 @@ def train_val(dict_config_cus):
 
             classifier_name = 'inception'  # METHOD_PARAMETER_TEMPLATE["model_name"]
 
-            tmp_output_directory = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"], "results",
+            tmp_output_directory = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"],
+                                                METHOD_PARAMETER_TEMPLATE["result_dir"],
+                                                str(METHOD_PARAMETER_TEMPLATE["data_lenght"]),
                                                 classifier_name,
                                                 METHOD_PARAMETER_TEMPLATE["archive_name"],
                                                 METHOD_PARAMETER_TEMPLATE["dataset_name"],
@@ -202,7 +204,8 @@ def train_val(dict_config_cus):
             k)))
 
         tmp_output_directory = os.path.join(METHOD_PARAMETER_TEMPLATE["datasets_dir"],
-                                            "results",
+                                            METHOD_PARAMETER_TEMPLATE["result_dir"],
+                                            str(METHOD_PARAMETER_TEMPLATE["data_lenght"]),
                                             classifier_name,
                                             METHOD_PARAMETER_TEMPLATE["archive_name"])  # 临时结果文件夹
 
