@@ -106,7 +106,7 @@ class Classifier_INCEPTION:
 
         # file_path = os.path.join(self.output_directory, 'best_model.hdf5')
 
-        file_path = os.path.join(self.output_directory, "saved-model-{epoch:02d}-{loss:.2f}-{val_acc:.2f}.hdf5")
+        file_path = os.path.join(self.output_directory, "saved-model-{epoch:06d}-{loss:.6f}-{val_acc:.6f}.hdf5")
 
         # checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=False, mode='max')
 
