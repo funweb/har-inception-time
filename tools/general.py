@@ -227,7 +227,7 @@ class ModelCheckpoint_cus(Callback):
                     print('\nEpoch %05d: %s improved from %0.5f to %0.5f, saving model to %s'
                           % (epoch + 1, self.monitor, self.best_period, current, self.filepath_period))
                 self.best_period = current
-                self.best_model_period = copy.deepcopy(self.model)  # 仅仅保存在内存中, 而不是写到文件
+                self.best_model_period = self.model  # 仅仅保存在内存中, 而不是写到文件
                 # self.best_model_period = copy.deepcopy(self.best_model_period)  # 仅仅保存在内存中, 而不是写到文件
 
         self.epochs_since_last_save += 1
