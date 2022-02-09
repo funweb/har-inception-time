@@ -222,13 +222,16 @@ class ModelCheckpoint_cus(Callback):
         if (self.period - (epoch % self.period) < self.period*0.4) and (epoch % int(self.period*0.4 / 10) == 0):  # 为了节省算力, 仅仅抽查.  取最后的20%中 每间隔 X==>(self.period*0.4 / 10) 就抽 1 个进行比较
             if self.monitor_op(current, self.best_period):
 
+                if self.best_period != self.init_value:
+                    os.remove(self.filepath_period)
+
                 self.filepath_period = os.path.join(os.path.dirname(self.filepath), "Pbest-"+os.path.basename(self.filepath)).format(epoch=epoch + 1, **logs)
                 if self.verbose > 0:
                     print('\nEpoch %05d: %s improved from %0.5f to %0.5f, saving model to %s'
                           % (epoch + 1, self.monitor, self.best_period, current, self.filepath_period))
                 self.best_period = current
-                self.best_model_period = self.model  # 仅仅保存在内存中, 而不是写到文件
-                # self.best_model_period = copy.deepcopy(self.best_model_period)  # 仅仅保存在内存中, 而不是写到文件
+                # self.best_model_period = copy.deepcopy(self.model)  # 仅仅保存在内存中, 而不是写到文件/// 解释, 尽管在内存中, 但是 copy.deepcopy 这个方法特别慢...
+                self.model.save(self.filepath_period, overwrite=True)
 
         self.epochs_since_last_save += 1
         if self.epochs_since_last_save >= self.period:
@@ -256,10 +259,8 @@ class ModelCheckpoint_cus(Callback):
                     print('\nEpoch %05d: saving model to %s' % (epoch + 1, filepath))
                 if self.save_weights_only:
                     self.model.save_weights(filepath, overwrite=True)
-                    self.best_model_period.save_weights(self.filepath_period, overwrite=True)
                 else:
                     self.model.save(filepath, overwrite=True)
-                    self.best_model_period.save(self.filepath_period, overwrite=True)
 
 
 if __name__ == '__main__':
