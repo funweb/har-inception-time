@@ -97,7 +97,7 @@ METHOD_PARAMETER_TEMPLATE = {
 
     "reTrain": True,
     "calculation_unit": "0",
-    "result_dir": "result",
+    "result_dir": "results",
     "complete_flag": "configParameter.json",
     "verbose": "1",
     "identifier": "20220201",
