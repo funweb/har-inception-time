@@ -261,7 +261,7 @@ if __name__ == '__main__':
     distance_int = 999
 
     # 模型公共参数
-    nb_epochs = 15
+    nb_epochs = 150
     batch_size = 64
 
     calculation_unit = "1"

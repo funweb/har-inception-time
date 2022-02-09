@@ -8,6 +8,7 @@ import keras
 import numpy as np
 import time
 
+from tools.general import ModelCheckpoint_cus
 from utils.utils import save_logs
 from utils.utils import calculate_metrics
 from utils.utils import save_test_duration
@@ -109,11 +110,19 @@ class Classifier_INCEPTION:
 
         # checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=False, mode='max')
 
-        model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
-                                                           monitor='loss', verbose=1,
-                                                           save_best_only=False,
-                                                           mode='min', period=int(self.nb_epochs/5),
-                                                           )
+        # model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path,
+        #                                                    monitor='loss', verbose=1,
+        #                                                    save_best_only=False,
+        #                                                    mode='min', period=int(self.nb_epochs/5),
+        #                                                    )
+
+        model_checkpoint = ModelCheckpoint_cus(filepath=file_path,
+                                               monitor='loss', verbose=1,
+                                               save_best_only=False,
+                                               save_best_only_period=True,
+                                               mode='min', period=int(self.nb_epochs/5),
+                                               )
+
 
         self.callbacks = [reduce_lr, model_checkpoint]
 
@@ -150,7 +159,7 @@ class Classifier_INCEPTION:
 
         min_loss = 128
         best_model_name = ""
-        pattern = r'saved-model-(\d+)-([1-9]\d*\.\d*|0\.\d*[1-9]\d*)-([1-9]\d*\.\d*|0\.\d*[1-9]\d*).hdf5'
+        pattern = r'[Pbest_]?saved-model-(\d+)-(\d*\.\d*)-(\d*\.\d*).hdf5'
 
         prog = re.compile(pattern)
         for hdf5_name in glob("{}/saved*hdf5".format(self.output_directory)):
