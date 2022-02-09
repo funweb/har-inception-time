@@ -120,7 +120,7 @@ class Classifier_INCEPTION:
                                                monitor='loss', verbose=1,
                                                save_best_only=False,
                                                save_best_only_period=True,
-                                               mode='min', period=int(self.nb_epochs/5),
+                                               mode='min', period=100,  # int(self.nb_epochs/5)
                                                )
 
 

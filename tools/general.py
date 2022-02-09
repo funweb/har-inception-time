@@ -220,7 +220,7 @@ class ModelCheckpoint_cus(Callback):
                   'skipping.' % (self.monitor), RuntimeWarning)
             return
 
-        if (self.period - (epoch % self.period) < self.period*0.2) and (epoch % int(self.period*0.2 / 6) == 0):  # 为了节省算力, 仅仅抽查.  取最后的20%中抽 X 个
+        if (self.period - (epoch % self.period) < self.period*0.4) and (epoch % int(self.period*0.4 / 10) == 0):  # 为了节省算力, 仅仅抽查.  取最后的20%中 每间隔 X==>(self.period*0.4 / 10) 就抽 1 个进行比较
             if self.monitor_op(current, self.best_period):
 
                 self.filepath_period = os.path.join(os.path.dirname(self.filepath), "Pbest-"+os.path.basename(self.filepath)).format(epoch=epoch + 1, **logs)
