@@ -95,7 +95,7 @@ METHOD_PARAMETER_TEMPLATE = {
     "optimizer": "",
     "patience": 200,  # 提前停止
 
-    "reTrain": True,
+    "reTrain": False,
     "calculation_unit": "0",
     "result_dir": "results",
     "complete_flag": "configParameter.json",
