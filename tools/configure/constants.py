@@ -67,7 +67,7 @@ LSTM_CONSTANT = {
 
 INCEPTION_CONSTANT = {
     "model_name": "inception",
-    "nb_iter_": 5,  # inception 个数
+    "nb_iter_": 1,  # inception 个数
     # "batch_size": 64,
     "nb_filters": 32,
     "use_residual": True,
