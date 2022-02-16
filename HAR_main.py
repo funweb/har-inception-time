@@ -277,7 +277,7 @@ if __name__ == '__main__':
         "data_lenght": data_lenght,
         "distance_int": distance_int,
 
-        "nb_epochs": nb_epochs,
+        "nb_epochs": 10,
         "batch_size": batch_size,
 
         "reTrain": True,
