@@ -157,6 +157,7 @@ class Classifier_INCEPTION:
 
         self.model.save(self.output_directory + 'last_model.hdf5')
 
+        ### -----------  认为 最小loss 是最好的
         min_loss = 128
         best_model_name = ""
         pattern = r'[Pbest_]?saved-model-(\d+)-(\d*\.\d*)-(\d*\.\d*).hdf5'
@@ -170,6 +171,7 @@ class Classifier_INCEPTION:
             if float(c_loss) < min_loss:
                 best_model_name = hdf5_name
         shutil.copy(os.path.join(self.output_directory, os.path.basename(best_model_name)), os.path.join(self.output_directory, "best_model.hdf5"))
+        ### -----------  认为 最小loss 是最好的
 
 
         y_pred = self.predict(x_val, y_true, x_train, y_train, y_val,
