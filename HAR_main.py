@@ -118,8 +118,6 @@ def train_val(dict_config_cus):
 
     general.Merge(METHOD_PARAMETER_TEMPLATE, dict_config_cus)
 
-    general.showResult(METHOD_PARAMETER_TEMPLATE)
-
     if METHOD_PARAMETER_TEMPLATE['calculation_unit'] is '0':
         os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     else:
