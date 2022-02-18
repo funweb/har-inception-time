@@ -80,8 +80,7 @@ class Classifier_NNE:
                 else:
                     # then compute the predictions
                     # 然后计算预测
-                    curr_y_pred = model.predict(x_test, y_true, x_train, y_train, y_test,
-                                                return_df_metrics=False)
+                    curr_y_pred = model.predict(x_test, y_true, x_train, y_train, y_test, return_df_metrics=False)
                     keras.backend.clear_session()
 
                     np.save(predictions_file_name, curr_y_pred)

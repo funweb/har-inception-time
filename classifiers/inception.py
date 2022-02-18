@@ -168,16 +168,15 @@ class Classifier_INCEPTION:
             c_epoch = matchObj.group(1)
             c_loss = matchObj.group(2)
             c_acc = matchObj.group(3)
-            if float(c_loss) < min_loss:
+            if float(c_loss) < min_loss:  # 这里出现了BUG,,, 比较之后忘记将最小值赋值给当前值...
                 best_model_name = hdf5_name
         if best_model_name == "":
             best_model_name = "last_model.hdf5"
         shutil.copy(os.path.join(self.output_directory, os.path.basename(best_model_name)), os.path.join(self.output_directory, "best_model.hdf5"))
+        print("{} --> {}".format(os.path.join(self.output_directory, os.path.basename(best_model_name)), os.path.join(self.output_directory, "best_model.hdf5")))
         ### -----------  认为 最小loss 是最好的
 
-
-        y_pred = self.predict(x_val, y_true, x_train, y_train, y_val,
-                              return_df_metrics=False)
+        y_pred = self.predict(x_val, y_true, x_train, y_train, y_val, return_df_metrics=False)
 
         # save predictions  保存预测
         np.save(self.output_directory + 'y_pred.npy', y_pred)
