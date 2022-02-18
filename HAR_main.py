@@ -99,7 +99,7 @@ def create_classifier(classifier_name, input_shape, nb_classes, output_directory
                       verbose=False, build=True):
     if classifier_name == 'nne':
         from classifiers import nne
-        return nne.Classifier_NNE(output_directory, input_shape, nb_classes, verbose)
+        return nne.Classifier_NNE(output_directory, input_shape, nb_classes, verbose, nb_iterations=METHOD_PARAMETER_TEMPLATE["nb_iter_"])
 
     if classifier_name == 'inception':
         from classifiers import inception
@@ -277,7 +277,7 @@ if __name__ == '__main__':
         "data_lenght": data_lenght,
         "distance_int": distance_int,
 
-        "nb_epochs": nb_epochs,
+        "nb_epochs": 10,
         "batch_size": batch_size,
 
         "reTrain": True,
