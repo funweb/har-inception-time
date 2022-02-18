@@ -2,6 +2,7 @@ import copy
 
 import keras
 import numpy as np
+import pandas as pd
 import yaml
 import os
 import time
@@ -261,6 +262,59 @@ class ModelCheckpoint_cus(Callback):
                     self.model.save_weights(filepath, overwrite=True)
                 else:
                     self.model.save(filepath, overwrite=True)
+
+
+def showResult(dict_config_cus, detail=True):
+    """
+    通过 df 显示结果
+    Args:
+        dict_config_cus:
+        detail:
+
+    Returns:
+
+    """
+    itr_str = "inception-"
+    for itr in range(dict_config_cus["nb_iter_"]):
+        # if itr == 0:
+        #     itr_str = ''
+        # else:
+        itr_str = itr_str + str(itr) + "-"
+
+    if detail:
+        index_list = ["precision_0", "precision_1", "precision_2", "precision_mean", "precision_std",
+                      "accuracy_0", "accuracy_1", "accuracy_2", "accuracy_mean", "accuracy_std",
+                      "recall_0", "recall_1", "recall_2", "recall_mean", "recall_std",
+                      "f1_0", "f1_1", "f1_2", "f1_mean", "f1_std",
+                      "duration_0", "duration_1", "duration_2", "duration_mean", "duration_std",
+                      ]
+    else:
+        index_list = ["acc_mean", "acc_std"]
+
+    df = pd.DataFrame(index=index_list)
+
+    for distant in ["9999", "999", "1", "2", "3", "4", "5"]:
+        sub_csv_path = os.path.join(dict_config_cus["datasets_dir"],
+                               dict_config_cus["result_dir"],
+                               str(dict_config_cus["data_lenght"]), "nne", itr_str,
+                               dict_config_cus["archive_name"],
+                               dict_config_cus["dataset_name"],
+                               str(distant),
+                               "ksplit_ave.csv"
+                               )
+        sub_csv = pd.read_csv(sub_csv_path)
+        sub_csv_list = sub_csv.loc[:, "precision"].tolist() + \
+                       sub_csv.loc[:, "accuracy"].tolist() + \
+                       sub_csv.loc[:, "recall"].tolist() + \
+                       sub_csv.loc[:, "f1"].tolist() + \
+                       sub_csv.loc[:, "duration"].tolist()
+        df[distant] = sub_csv_list
+
+    csv_path = os.path.join(sub_csv_path, "..", "..", "result_df.csv")
+    df.to_csv(csv_path)
+
+    return df
+
 
 
 if __name__ == '__main__':

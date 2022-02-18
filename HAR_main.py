@@ -280,6 +280,7 @@ def train_val(dict_config_cus):
     ############################################### main
 
 if __name__ == '__main__':
+
     # 数据参数
     dataset_name = "cairo"
     data_lenght = 300
