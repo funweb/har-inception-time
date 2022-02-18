@@ -169,6 +169,7 @@ class Classifier_INCEPTION:
             c_loss = matchObj.group(2)
             c_acc = matchObj.group(3)
             if float(c_loss) < min_loss:  # 这里出现了BUG,,, 比较之后忘记将最小值赋值给当前值...
+                min_loss = c_loss
                 best_model_name = hdf5_name
         if best_model_name == "":
             best_model_name = "last_model.hdf5"
