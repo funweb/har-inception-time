@@ -147,7 +147,8 @@ def train_val(dict_config_cus):
         # 在整个 TSC 存档上运行 Inception 的 nb_iter_ 迭代
 
         for iter in range(METHOD_PARAMETER_TEMPLATE["nb_iter_"]):
-            print(emoji.emojize(":repeat_single_button: iter: {}/{}".format(iter, METHOD_PARAMETER_TEMPLATE["nb_iter_"]-1)))
+            print(emoji.emojize(":repeat_single_button: {}/{}, iter: {}/{}".format(k, METHOD_PARAMETER_TEMPLATE['ksplit']-1,
+                                                                                   iter, METHOD_PARAMETER_TEMPLATE["nb_iter_"]-1)))
 
             trr = '_itr_' + str(iter)
 
@@ -236,19 +237,41 @@ def train_val(dict_config_cus):
 
     # 计算k折交叉的均值和方差
 
-    s = ""
-    for n in df_metrics.columns:
-        if len(n.split(":")) == 1:  # 保证是想要的字段吗, 因为 df 转过来之后会有不知道啥的冗余第一列(index)
-            n_mean = np.mean(df_metrics[n])
-            n_std = np.std(df_metrics[n])
-            s += 'current database: {}, distance_int: {}, metric: {} \t {:.2f}% (+/- {:.2f}%)\n'.format(
-                METHOD_PARAMETER_TEMPLATE["dataset_name"],
-                METHOD_PARAMETER_TEMPLATE["distance_int"], n, n_mean, n_std)
+    n_mean = {
+        "precision": np.mean(df_metrics["precision"]),
+        "accuracy": np.mean(df_metrics["accuracy"]),
+        "recall": np.mean(df_metrics["recall"]),
+        "f1": np.mean(df_metrics["f1"]),
+        "duration": np.mean(df_metrics["duration"]),
+    }
 
-    print(s)
-    with open(os.path.join(os.path.join(classifier_class.output_directory, ".."), "ksplit_ave.csv"), 'w', encoding="utf-8") as fw:
-        fw.writelines(s)
+    n_std = {
+        "precision": np.std(df_metrics["precision"]),
+        "accuracy": np.std(df_metrics["accuracy"]),
+        "recall": np.std(df_metrics["recall"]),
+        "f1": np.std(df_metrics["f1"]),
+        "duration": np.std(df_metrics["duration"]),
+    }
 
+
+
+    df_metrics = df_metrics.append([n_mean, n_std], ignore_index=True)
+    # s = ""
+    # for n in df_metrics.columns:
+    #     if len(n.split(":")) == 1:  # 保证是想要的字段吗, 因为 df 转过来之后会有不知道啥的冗余第一列(index)
+    #         n_mean = np.mean(df_metrics[n])
+    #         n_std = np.std(df_metrics[n])
+    #         s += 'current database: {}, distance_int: {}, metric: {} \t {:.2f}% (+/- {:.2f}%)\n'.format(
+    #             METHOD_PARAMETER_TEMPLATE["dataset_name"],
+    #             METHOD_PARAMETER_TEMPLATE["distance_int"], n, n_mean, n_std)
+
+
+    # print(s)
+    df_metrics.to_csv(os.path.join(os.path.join(classifier_class.output_directory, ".."), "ksplit_ave.csv"))
+    # with open(os.path.join(os.path.join(classifier_class.output_directory, ".."), "ksplit_ave.csv"), 'w', encoding="utf-8") as fw:
+    #     fw.writelines(s)
+
+    print(df_metrics)
     print(emoji.emojize(" :check_mark: done."))
 
 
