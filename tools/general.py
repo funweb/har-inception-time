@@ -311,7 +311,7 @@ def showResult(dict_config_cus, detail=True):
         df[distant] = sub_csv_list
 
     csv_path = os.path.join(sub_csv_path, "..", "..", "result_df.csv")
-    print("csv_path of result_df at: {}".format(csv_path))
+    print("csv_path of result_df at: {}".format(csv_path))  # 千万记得保存完文件要输出路径
     df.to_csv(csv_path)
 
     return df
