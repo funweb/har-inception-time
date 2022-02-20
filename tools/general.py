@@ -294,14 +294,14 @@ def showResult(dict_config_cus, detail=True):
     df = pd.DataFrame(index=index_list)
 
     for distant in ["9999", "999", "1", "2", "3", "4", "5"]:
-        sub_csv_path = os.path.join(dict_config_cus["datasets_dir"],
+        sub_csv_dir = os.path.join(dict_config_cus["datasets_dir"],
                                dict_config_cus["result_dir"],
                                str(dict_config_cus["data_lenght"]), "nne", itr_str,
                                dict_config_cus["archive_name"],
                                dict_config_cus["dataset_name"],
                                str(distant),
-                               "ksplit_ave.csv"
                                )
+        sub_csv_path = os.path.join(sub_csv_dir, "ksplit_ave.csv")
         sub_csv = pd.read_csv(sub_csv_path)
         sub_csv_list = sub_csv.loc[:, "precision"].tolist() + \
                        sub_csv.loc[:, "accuracy"].tolist() + \
@@ -310,7 +310,7 @@ def showResult(dict_config_cus, detail=True):
                        sub_csv.loc[:, "duration"].tolist()
         df[distant] = sub_csv_list
 
-    csv_path = os.path.join(sub_csv_path, "..", "..", "result_df.csv")
+    csv_path = os.path.join(sub_csv_dir, "..", "result_df.csv")
     print("csv_path of result_df at: {}".format(csv_path))  # 千万记得保存完文件要输出路径
     df.to_csv(csv_path)
 
