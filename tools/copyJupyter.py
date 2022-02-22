@@ -22,7 +22,7 @@ copy_num = 5
 dataname_list = ["cairo", "milan", "kyoto7", "kyoto8", "kyoto11"]
 
 source_file = os.path.join(op_dir, source_file_name)
-
+target_file_name_list = []
 for i in range(copy_num):
     tag += 1
     dataname = dataname_list[i]
@@ -33,5 +33,8 @@ for i in range(copy_num):
     assert not os.path.exists(target_file), "文件已存在, 请查验"
 
     print("{}->\n{}\n\n".format(source_file, target_file))
+    target_file_name_list.append(target_file)
     time.sleep(3)
     shutil.copy(source_file, target_file)
+
+print(target_file_name_list)
